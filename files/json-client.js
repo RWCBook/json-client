@@ -20,6 +20,9 @@
 
 function json() {
 
+  /********************************
+   DELCARATIONS
+  ********************************/ 
   var d = domHelp();  
   var g = {};
   
@@ -30,38 +33,111 @@ function json() {
   g.ctype = "application/json";
   g.object = "";
   
-  // fields to process
+  // control objects
   g.fields = {};
-  g.fields.task = ["id","title","completeFlag","assignedUser"];
-  g.fields.user = ["nick","name","password"];
-  
-  // content to display
+  g.actions = {};
   g.content = {};
+
+  /********************************
+    HOME CONTROLS
+  ********************************/
+  // home controls
+  g.fields.home = [];
+  
+  // home object content
+  g.content.home = "";
+  g.content.home =  '<div class="ui segment">';
+  g.content.home += '  <h3>Welcome to TPS at BigCo!</h3>';
+  g.content.home += '  <p><b>Select one of the actions above</b></p>';
+  g.content.home += '</div>';
+
+  // home actions
+  g.actions.home = {
+    home:       {target:"app", func:httpGet, href:"/home/", prompt:"Home"}, 
+    tasks:      {target:"app", func:httpGet, href:"/task/", prompt:"Tasks"}, 
+    users:      {target:"app", func:httpGet, href:"/user/", prompt:"Users"}  
+  };
+
+  /********************************
+    TASK CONTROLS
+  ********************************/
+  // task fields 
+  g.fields.task = ["id","title","completeFlag","assignedUser"];
+  
+  // task object content
   g.content.task = "";
   g.content.task += '<div class="ui segment">';
-  g.content.task += '<h3>Manage your TPS Tasks here.</h3>';
-  g.content.task += '<p>You can do the following:</p>';
-  g.content.task += '<ul>';
-  g.content.task += '<li>Add, Edit and Delete tasks</li>';
-  g.content.task += '<li>Mark tasks "complete", assign tasks to a user</li>';
-  g.content.task += '<li>Filter the list by Title, Assigned User, and Completed Status</li>';
-  g.content.task += '</ul>';
+  g.content.task += '  <h3>Manage your TPS Tasks here.</h3>';
+  g.content.task += '  <p>You can do the following:</p>';
+  g.content.task += '  <ul>';
+  g.content.task += '    <li>Add, Edit and Delete tasks</li>';
+  g.content.task += '    <li>Mark tasks "complete", assign tasks to a user</li>';
+  g.content.task += '    <li>Filter the list by Title, Assigned User, and Completed Status</li>';
+  g.content.task += '  </ul>';
   g.content.task += '</div>';
 
+  // task object actions
+  g.actions.task = {
+    home:       {target:"app", func:httpGet, href:"/home/", prompt:"Home"}, 
+    tasks:      {target:"app", func:httpGet, href:"/task/", prompt:"Tasks"}, 
+    users:      {target:"app", func:httpGet, href:"/user/", prompt:"Users"},  
+    active:     {target:"list", func:httpGet, href:"/task/?completeFlag=false", prompt:"Active Tasks"}, 
+    closed:     {target:"list", func:httpGet, href:"/task/?completeFlag=true", prompt:"Completed Tasks"}, 
+    byTitle:    {target:"list", func:jsonForm, href:"/task", prompt:"By Title", method:"GET",
+                  args:{
+                    title: {value:"", prompt:"Title", required:true}
+                  }
+                }, 
+    byUser:     {target:"list", func:jsonForm, href:"/task", prompt:"By User", method:"GET",
+                  args:{
+                    assignedUser: {value:"", prompt:"Assigned User", required:true}
+                  }
+                }, 
+    add:        {target:"list", func:jsonForm, href:"/task/", prompt:"Add Task", method:"POST",
+                  args:{
+                    title: {value:"", prompt:"Title", required:true},
+                    completeFlag: {value:"", prompt:"completeFlag"}
+                  }
+                },
+    item:       {target:"item", func:httpGet, href:"/task/{id}", prompt:"Item"},
+    edit:       {target:"single", func:jsonForm, href:"/task/{id}", prompt:"Edit", method:"PUT",
+                  args:{
+                    id: {value:"{id}", prompt:"Id", readOnly:true},
+                    title: {value:"{title}", prompt:"Title", required:true},
+                    completeFlag: {value:"{completeFlag}", prompt:"completeFlag"}
+                  }
+                },
+    delete:     {target:"single", func:httpDelete, href:"/task/{id}", prompt:"Delete", method:"DELETE", args:{}},
+    assign:     {target:"single", func:jsonForm, href:"/task/assign/{id}", prompt:"Assign User", method:"POST",
+                  args:{
+                    id: {value:"{id}", prompt:"Id", readOnly:true},
+                    assignedUser: {value:"{assignedUser}", prompt:"Assigned User", required:true}
+                  }
+                },    
+    completed:  {target:"single", func:jsonForm, href:"/task/completed/{id}", prompt:"Mark Complete", method:"POST"},
+  };
+
+  /********************************
+    USER CONTROLS
+  ********************************/
+  // user fields
+  g.fields.user = ["nick","name","password"];
+
+  // user object content
   g.content.user = "";
   g.content.user += '<div class="ui segment">';
-  g.content.user += '<h3>Manage your TPS Users here.</h3>';
-  g.content.user += '<p>You can do the following:</p>';
-  g.content.user += '<ul>';
-  g.content.user += '<li>Add and Edit users</li>';
-  g.content.user += '<li>Change the password, view the tasks assigned to a user</li>';
-  g.content.user += '<li>Filter the list by Nickname or FullName</li>';
-  g.content.user += '</ul>';
+  g.content.user += '  <h3>Manage your TPS Users here.</h3>';
+  g.content.user += '  <p>You can do the following:</p>';
+  g.content.user += '  <ul>';
+  g.content.user += '    <li>Add and Edit users</li>';
+  g.content.user += '    <li>Change the password, view the tasks assigned to a user</li>';
+  g.content.user += '    <li>Filter the list by Nickname or FullName</li>';
+  g.content.user += '  </ul>';
   g.content.user += '</div>';
-
-  // URLs & action details
-  g.actions = {};
+  
+  // user object actions
   g.actions.user = {
+    home:       {target:"app", func:httpGet, href:"/home/", prompt:"Home"}, 
     tasks:      {target:"app", func:httpGet, href:"/task/", prompt:"Tasks"}, 
     users:      {target:"app", func:httpGet, href:"/user/", prompt:"Users"},  
     byNick:     {target:"list", func:jsonForm, href:"/user", prompt:"By Nickname", method:"GET",
@@ -98,45 +174,11 @@ function json() {
                 },    
     assigned:   {target:"single", func:httpGet, href:"/task/?assignedUser={id}", prompt:"Assigned Tasks"}
   };
-  g.actions.task = {
-    tasks:      {target:"app", func:httpGet, href:"/task/", prompt:"Tasks"}, 
-    users:      {target:"app", func:httpGet, href:"/user/", prompt:"Users"},  
-    active:     {target:"list", func:httpGet, href:"/task/?completeFlag=false", prompt:"Active Tasks"}, 
-    closed:     {target:"list", func:httpGet, href:"/task/?completeFlag=true", prompt:"Completed Tasks"}, 
-    byTitle:    {target:"list", func:jsonForm, href:"/task", prompt:"By Title", method:"GET",
-                  args:{
-                    title: {value:"", prompt:"Title", required:true}
-                  }
-                }, 
-    byUser:     {target:"list", func:jsonForm, href:"/task", prompt:"By User", method:"GET",
-                  args:{
-                    assignedUser: {value:"", prompt:"Assigned User", required:true}
-                  }
-                }, 
-    add:        {target:"list", func:jsonForm, href:"/task/", prompt:"Add Task", method:"POST",
-                  args:{
-                    title: {value:"", prompt:"Title", required:true},
-                    completeFlag: {value:"", prompt:"completeFlag"}
-                  }
-                },
-    item:       {target:"item", func:httpGet, href:"/task/{id}", prompt:"Item"},
-    edit:       {target:"single", func:jsonForm, href:"/task/{id}", prompt:"Edit", method:"PUT",
-                  args:{
-                    id: {value:"{id}", prompt:"Id", readOnly:true},
-                    title: {value:"{title}", prompt:"Title", required:true},
-                    completeFlag: {value:"{completeFlag}", prompt:"completeFlag"}
-                  }
-                },
-    delete:     {target:"single", func:httpDelete, href:"/task/{id}", prompt:"Delete", method:"DELETE", args:{}},
-    completed:  {target:"single", func:jsonForm, href:"/task/completed/{id}", prompt:"Mark Complete", method:"POST"},
-    assign:     {target:"single", func:jsonForm, href:"/task/assign/{id}", prompt:"Assign User", method:"POST",
-                  args:{
-                    id: {value:"{id}", prompt:"Id", readOnly:true},
-                    assignedUser: {value:"{assignedUser}", prompt:"Assigned User", required:true}
-                  }
-                }    
-  };
+  
 
+  /********************************
+    MAIN CODE
+  ********************************/
   // init library and start
   function init(url, title) {
     if(!url || url==='') {
@@ -149,12 +191,13 @@ function json() {
     }
   }
 
-  // primary loop
+  // process loop
   function parseMsg() {
   
     // which object returned?
     if(g.msg.task) {g.object = "task";}
     if(g.msg.user) {g.object = "user";}
+    if(g.msg.home) {g.object = "home";}
     
     dump();
     title();
@@ -187,11 +230,9 @@ function json() {
     var act, actions;   
     var elm, coll;
     var ul, li, a;
-    
 
     elm = d.find("toplinks");
     d.clear(elm);
-
     ul = d.node("ul");
     
     actions = g.actions[g.object];
@@ -335,10 +376,9 @@ function json() {
     d.push(ul, elm);      
   }
   
-  // ********************************
-  // JSON-client Helpers
-  // ********************************
-  
+  /********************************
+   JSON-CLIENT HELPERS
+  ********************************/
   // function clear out any form
   function clearForm() {
     var elm;
@@ -414,10 +454,9 @@ function json() {
     return false;
   }
   
-  // ********************************
-  // ajax helpers
-  // ********************************
-  
+  /********************************
+   AJAX HELPERS
+  ********************************/  
   // mid-level HTTP handlers
   function httpGet(e) {
     req(e.target.href, "get", null);
@@ -499,7 +538,9 @@ function json() {
     }
   }
 
-  // export function
+  /********************************
+    EXPORT FUNCTIONS
+  *********************************/
   var that = {};
   that.init = init;
   return that;
