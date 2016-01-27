@@ -1,0 +1,33 @@
+{
+  "name": "TPS-JSONClient",
+  "version": "1.0.0",
+  "description": "TPS - Task Processing Service JSON-Client for Web API",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": "0.10.25"
+  },
+  "dependencies" : { 
+    "uritemplate" : "0.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RWCBook/json-client.git"
+  },
+  "keywords": [
+    "hypermedia",
+    "amundsen",
+    "HTML",
+    "representor",
+    "O'Reilly",
+    "RESTful",
+    "RESTful Web Clients",
+    "JSON",
+    "RPC",
+    "CRUD",
+    "Client"
+  ],
+  "license": "MIT"
+}
