@@ -262,7 +262,7 @@ function addUserItem(req, res, respond) {
     }
 
     if (!doc) {
-      respond(req, res, {code:302, doc:"", 
+      respond(req, res, {code:303, doc:"", 
         headers:{'location':'//'+req.headers.host+"/user/"}
       });
     } 
@@ -299,7 +299,7 @@ function updateUser(req, res, respond, id) {
 
     if (!doc) {
       respond(req, res, 
-        {code:302, doc:"", headers:{'location':'//'+req.headers.host+"/user/"}}
+        {code:303, doc:"", headers:{'location':'//'+req.headers.host+"/user/"}}
       );
     } 
     else {
@@ -335,7 +335,7 @@ function changePassword(req, res, respond, id) {
 
     if (!doc) {
       respond(req, res, 
-        {code:302, doc:"", headers:{'location':'//'+req.headers.host+"/user/"}}
+        {code:303, doc:"", headers:{'location':'//'+req.headers.host+"/user/"}}
       );
     } 
     else {

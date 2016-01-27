@@ -13,7 +13,7 @@
 
   ISSUES:
   - memorized the serialized msg for "task" and "user" object array & selected fields
-  - memorized all 17 documented actions and associated args, HTTP details
+  - memorized all 18 documented actions and associated args, HTTP details
   - will ignore non-breaking changes from server (new actions, objects, fields)
   - will crash on breaking changes from server (changed actions, objects, fields)
 */
@@ -30,26 +30,109 @@ function json() {
   g.ctype = "application/json";
   g.object = "";
   
-  // the only fields to process
+  // fields to process
   g.fields = {};
   g.fields.task = ["id","title","completeFlag","assignedUser"];
   g.fields.user = ["nick","name","password"];
   
-  // all URLs & action details
+  // content to display
+  g.content = {};
+  g.content.task = "";
+  g.content.task += '<div class="ui segment">';
+  g.content.task += '<h3>Manage your TPS Tasks here.</h3>';
+  g.content.task += '<p>You can do the following:</p>';
+  g.content.task += '<ul>';
+  g.content.task += '<li>Add, Edit and Delete tasks</li>';
+  g.content.task += '<li>Mark tasks "complete", assign tasks to a user</li>';
+  g.content.task += '<li>Filter the list by Title, Assigned User, and Completed Status</li>';
+  g.content.task += '</ul>';
+  g.content.task += '</div>';
+
+  g.content.user = "";
+  g.content.user += '<div class="ui segment">';
+  g.content.user += '<h3>Manage your TPS Users here.</h3>';
+  g.content.user += '<p>You can do the following:</p>';
+  g.content.user += '<ul>';
+  g.content.user += '<li>Add and Edit users</li>';
+  g.content.user += '<li>Change the password, view the tasks assigned to a user</li>';
+  g.content.user += '<li>Filter the list by Nickname or FullName</li>';
+  g.content.user += '</ul>';
+  g.content.user += '</div>';
+
+  // URLs & action details
   g.actions = {};
-  g.actions.user = {};
+  g.actions.user = {
+    tasks:      {target:"app", func:httpGet, href:"/task/", prompt:"Tasks"}, 
+    users:      {target:"app", func:httpGet, href:"/user/", prompt:"Users"},  
+    byNick:     {target:"list", func:jsonForm, href:"/user", prompt:"By Nickname", method:"GET",
+                  args:{
+                    nick: {value:"", prompt:"Nickname", required:true}
+                  }
+                }, 
+    byName:     {target:"list", func:jsonForm, href:"/user", prompt:"By Name", method:"GET",
+                  args:{
+                    name: {value:"", prompt:"Name", required:true}
+                  }
+                }, 
+    add:        {target:"list", func:jsonForm, href:"/user/", prompt:"Add User", method:"POST",
+                  args:{
+                    nick: {value:"", prompt:"Nickname", required:true, pattern:"[a-zA-Z0-9]+"},
+                    password: {value:"", prompt:"Password", required:true, pattern:"[a-zA-Z0-9!@#$%^&*-]+"},
+                    name: {value:"", prompt:"Full Name", required:true},
+                  }
+                },
+    item:       {target:"item", func:httpGet, href:"/user/{id}", prompt:"Item"},
+    edit:       {target:"single", func:jsonForm, href:"/user/{id}", prompt:"Edit", method:"PUT",
+                  args:{
+                    nick: {value:"{nick}", prompt:"Nickname", readOnly:true},
+                    name: {value:"{name}", prompt:"Full Name",required:true}
+                  }
+                },
+    changepw:   {target:"single", func:jsonForm, href:"/task/pass/{id}", prompt:"Change Password", method:"POST",
+                  args:{
+                    nick: {value:"{nick}", prompt:"NickName", readOnly:true},
+                    oldPass: {value:"", prompt:"Old Password", required:true, pattern:"[a-zA-Z0-9!@#$%^&*-]+"},
+                    newPass: {value:"", prompt:"New Password", required:true, pattern:"[a-zA-Z0-9!@#$%^&*-]+"},
+                    checkPass: {value:"", prompt:"Confirm New", required:true, pattern:"[a-zA-Z0-9!@#$%^&*-]+"},
+                  }
+                },    
+    assigned:   {target:"single", func:httpGet, href:"/task/?assignedUser={id}", prompt:"Assigned Tasks"}
+  };
   g.actions.task = {
-    collection: {href:"/task/", prompt:"All Tasks"},  
-    item:       {href:"/task/{id}", prompt:"Item"},
-    add:        {href:"/task/", prompt:"Add Task", method:"POST",
+    tasks:      {target:"app", func:httpGet, href:"/task/", prompt:"Tasks"}, 
+    users:      {target:"app", func:httpGet, href:"/user/", prompt:"Users"},  
+    active:     {target:"list", func:httpGet, href:"/task/?completeFlag=false", prompt:"Active Tasks"}, 
+    closed:     {target:"list", func:httpGet, href:"/task/?completeFlag=true", prompt:"Completed Tasks"}, 
+    byTitle:    {target:"list", func:jsonForm, href:"/task", prompt:"By Title", method:"GET",
                   args:{
                     title: {value:"", prompt:"Title", required:true}
                   }
+                }, 
+    byUser:     {target:"list", func:jsonForm, href:"/task", prompt:"By User", method:"GET",
+                  args:{
+                    assignedUser: {value:"", prompt:"Assigned User", required:true}
+                  }
+                }, 
+    add:        {target:"list", func:jsonForm, href:"/task/", prompt:"Add Task", method:"POST",
+                  args:{
+                    title: {value:"", prompt:"Title", required:true},
+                    completeFlag: {value:"", prompt:"completeFlag"}
+                  }
                 },
-    edit:       {href:"/task/{id}", prompt:"Edit", method:"PUT",
+    item:       {target:"item", func:httpGet, href:"/task/{id}", prompt:"Item"},
+    edit:       {target:"single", func:jsonForm, href:"/task/{id}", prompt:"Edit", method:"PUT",
                   args:{
                     id: {value:"{id}", prompt:"Id", readOnly:true},
-                    title: {value:"{title}", prompt:"Title", required:true}
+                    title: {value:"{title}", prompt:"Title", required:true},
+                    completeFlag: {value:"{completeFlag}", prompt:"completeFlag"}
+                  }
+                },
+    delete:     {target:"single", func:httpDelete, href:"/task/{id}", prompt:"Delete", method:"DELETE", args:{}},
+    completed:  {target:"single", func:jsonForm, href:"/task/completed/{id}", prompt:"Mark Complete", method:"POST"},
+    assign:     {target:"single", func:jsonForm, href:"/task/assign/{id}", prompt:"Assign User", method:"POST",
+                  args:{
+                    id: {value:"{id}", prompt:"Id", readOnly:true},
+                    assignedUser: {value:"{assignedUser}", prompt:"Assigned User", required:true}
                   }
                 }    
   };
@@ -75,6 +158,8 @@ function json() {
     
     dump();
     title();
+    toplinks();
+    content();
     items();
     actions();
     clearForm();
@@ -97,6 +182,45 @@ function json() {
     elm[0].innerText = g.title;
   }
   
+  // emit links for all views
+  function toplinks() {
+    var act, actions;   
+    var elm, coll;
+    var ul, li, a;
+    
+
+    elm = d.find("toplinks");
+    d.clear(elm);
+
+    ul = d.node("ul");
+    
+    actions = g.actions[g.object];
+    for(var act in actions) {
+      link = actions[act]
+      if(link.target==="app") {
+        li = d.node("li");
+        a = d.anchor({
+          href:link.href,
+          rel:(link.rel||"collection"),
+          className:"action",
+          text:link.prompt
+        });
+        a.onclick = link.func;
+        d.push(a,li);
+        d.push(li, ul);
+      }
+    }
+    d.push(ul,elm);    
+  }
+  
+  // emit any static content
+  function content() {
+    var elm;
+    
+    elm = d.find("content");
+    elm.innerHTML = g.content[g.object];
+  }
+  
   // handle item collection
   function items() {
     var msg, flds;
@@ -109,7 +233,7 @@ function json() {
     msg = g.msg[g.object];
     flds = g.fields[g.object];
     
-    // handle task objects
+    // handle returned objects
     if(msg) {
       coll = msg;
       ul = d.node("ul");
@@ -140,89 +264,79 @@ function json() {
   
   // handle item-level actions
   function itemActions(dt, item, single) {
-    var actions, a, link;
+    var act, actions, link, a;
     
     actions = g.actions[g.object];
-    
-    if(actions) {
-      // item link
-      link = actions.item;
-      a = d.anchor({
-        href:link.href.replace(/{id}/,item.id),
-        rel:"item",
-        className:"item action",
-        text:link.prompt
-      });
-      a.onclick = httpGet;
-      d.push(a,dt);
-      
-      // only show these for single item renders
-      if(single===true) {
-        // edit link
-        link = actions.edit;
+    for(act in actions) {
+      link = actions[act];
+      if(link.target==="item") {
         a = d.anchor({
-          href:link.href.replace(/{id}/,item.id),
-          rel:"edit",
+          href:link.href.replace(/{id}/g,item.id),
+          rel:(link.rel||"item"),
           className:"item action",
           text:link.prompt
         });
-        a.onclick = jsonForm;
-        a.setAttribute("method",link.method);
-        a.setAttribute("args",JSON.stringify(link.args));
+        a.onclick = link.func
+        a.setAttribute("method",(link.method||"GET"));
+        a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
         d.push(a,dt);
       }
     }
-        
+    
+    // only when showing single record
+    if(single===true) {
+      for(act in actions) {
+        link = actions[act];
+        if(link.target==="single") {
+          a = d.anchor({
+            href:link.href.replace(/{id}/g,item.id),
+            rel:(link.rel||"item"),
+            className:"item action",
+            text:link.prompt
+          });
+          a.onclick = link.func
+          a.setAttribute("method",(link.method||""));
+          a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
+          d.push(a,dt);
+        }
+      }
+    }
     return dt;  
   }
   
-  // handle page-level actions
+  // handle list-level actions
   function actions() {
     var actions;   
     var elm, coll;
     var ul, li, a;
+
+    elm = d.find("actions");
+    d.clear(elm);
+    ul = d.node("ul");
     
     actions = g.actions[g.object];
-    if(actions) {
-      elm = d.find("actions");
-      d.clear(elm);
-
-      ul = d.node("ul");
-      
-      // collection
-      li = d.node("li");
-      link = actions.collection;
-      a = d.anchor({
-        href:link.href,
-        rel:"collection",
-        className:"action",
-        text:link.prompt
-      });
-      a.onclick = httpGet;
-      d.push(a,li);
-      d.push(li, ul);
-
-      // add
-      li = d.node("li");
-      link = actions.add;
-      a = d.anchor({
-        href:link.href,
-        rel:"create-form",
-        className:"action",
-        text:link.prompt
-      });
-      a.onclick = jsonForm;
-      a.setAttribute("method",link.method);
-      a.setAttribute("args", JSON.stringify(link.args));
-      d.push(a,li);
-      d.push(li, ul);
-      
-      d.push(ul, elm);
+    for(var act in actions) {
+      link = actions[act];
+      if(link.target==="list") {
+        li = d.node("li");
+        a = d.anchor({
+          href:link.href,
+          rel:"collection",
+          className:"action",
+          text:link.prompt
+        });
+        a.onclick = link.func;
+        a.setAttribute("method",(link.method||"GET"));
+        a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
+        d.push(a,li);
+        d.push(li, ul);
+      }
     }
+    d.push(ul, elm);      
   }
   
   // ********************************
-  // JSON Helpers
+  // JSON-client Helpers
   // ********************************
   
   // function clear out any form
@@ -235,9 +349,12 @@ function json() {
   
   // generate a form for user input
   function jsonForm(e) {
+    var msg;
     var elm, coll, link, val;
     var form, lg, fs, p, inp;
      
+    msg = g.msg[g.object];
+    
     elm = d.find("form");
     d.clear(elm);
     link = e.target;
@@ -265,8 +382,8 @@ function json() {
     coll = JSON.parse(link.getAttribute("args"));
     for(var prop in coll) {
       val = coll[prop].value;
-      if(g.msg.todo[0][prop]) {
-        val = val.replace("{"+prop+"}",g.msg.todo[0][prop]);
+      if(msg[0][prop]) {
+        val = val.replace("{"+prop+"}",msg[0][prop]);
       } 
       p = d.input({
         prompt:coll[prop].prompt,

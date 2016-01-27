@@ -340,7 +340,7 @@ function addTask(req, res, respond) {
     }
 
     if (!doc) {
-      respond(req, res, {code:302, doc:"", 
+      respond(req, res, {code:303, doc:"", 
         headers:{'location':'//'+req.headers.host+"/task/"}
       });
     } 
@@ -376,7 +376,7 @@ function updateTask(req, res, respond, id) {
 
     if (!doc) {
       respond(req, res, 
-        {code:302, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
+        {code:303, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
       );
     } 
     else {
@@ -402,7 +402,7 @@ function removeTask(req, res, respond, id) {
   
   if (!doc) {
     respond(req, res, 
-      {code:302, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
+      {code:303, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
     );
   } 
   else {
@@ -427,7 +427,7 @@ function markCompleted(req, res, respond, id) {
 
   if (!doc) {
     respond(req, res, 
-      {code:302, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
+      {code:303, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
     );
   } 
   else {
@@ -461,7 +461,7 @@ function assignUser(req, res, respond, id) {
 
     if (!doc) {
       respond(req, res, 
-        {code:302, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
+        {code:303, doc:"", headers:{'location':'//'+req.headers.host+"/task/"}}
       );
     } 
     else {
