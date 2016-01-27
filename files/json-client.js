@@ -193,14 +193,9 @@ function json() {
 
   // process loop
   function parseMsg() {
-  
-    // which object returned?
-    if(g.msg.task) {g.object = "task";}
-    if(g.msg.user) {g.object = "user";}
-    if(g.msg.home) {g.object = "home";}
-    
     dump();
     title();
+    setObject();
     toplinks();
     content();
     items();
@@ -208,6 +203,13 @@ function json() {
     clearForm();
   }
 
+  // set response object pointer
+  function setObject() {
+    if(g.msg.task) {g.object = "task";}
+    if(g.msg.user) {g.object = "user";}
+    if(g.msg.home) {g.object = "home";}    
+  }
+  
   // handle response dump
   function dump() {
     var elm = d.find("dump");
