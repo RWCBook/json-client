@@ -15,7 +15,7 @@
   - memorized the serialized msg for "task" and "user" object array & selected fields
   - memorized all 18 documented actions and associated args, HTTP details
   - will ignore non-breaking changes from server (new actions, objects, fields)
-  - will crash on breaking changes from server (changed actions, objects, fields)
+  - may crash on breaking changes from server (changed actions, objects, fields)
 */
 
 function json() {
