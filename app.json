@@ -1,7 +1,7 @@
 {
-  "name": "Task Processing (JSON-CRUD2)",
-  "description": "The JSON-CRUD-V2 version of the TPS sample NodeJS app from @RWCBook",
-  "repository": "https://github.com/RWCBook/json-crud-v2",
+  "name": "Task Processing (JSON-Client)",
+  "description": "The JSON CLIENT version of the TPS sample NodeJS app from @RWCBook",
+  "repository": "https://github.com/RWCBook/json-client",
   "logo": "https://avatars2.githubusercontent.com/u/16432667?v=3&s=200",
   "keywords": ["Hypermedia", "REST", "RWCBook", "JSON", "CRUD", "RPC", "Client"]
 }
