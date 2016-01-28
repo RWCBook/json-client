@@ -235,25 +235,24 @@ function json() {
 
     elm = d.find("toplinks");
     d.clear(elm);
-    ul = d.node("ul");
+    menu = d.node("div");
+    menu.className = "ui horizontal menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
       link = actions[act]
       if(link.target==="app") {
-        li = d.node("li");
         a = d.anchor({
           href:link.href,
           rel:(link.rel||"collection"),
-          className:"action",
+          className:"action item",
           text:link.prompt
         });
         a.onclick = link.func;
-        d.push(a,li);
-        d.push(li, ul);
+        d.push(a, menu);
       }
     }
-    d.push(ul,elm);    
+    d.push(menu,elm);
   }
   
   // emit any static content
@@ -355,27 +354,26 @@ function json() {
 
     elm = d.find("actions");
     d.clear(elm);
-    ul = d.node("ul");
+    menu = d.node("div");
+    menu.className = "ui horizontal menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
       link = actions[act];
       if(link.target==="list") {
-        li = d.node("li");
         a = d.anchor({
           href:link.href,
           rel:"collection",
-          className:"action",
+          className:"action item",
           text:link.prompt
         });
         a.onclick = link.func;
         a.setAttribute("method",(link.method||"GET"));
         a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
-        d.push(a,li);
-        d.push(li, ul);
+        d.push(a,menu);
       }
     }
-    d.push(ul, elm);      
+    d.push(menu, elm);
   }
   
   /********************************
