@@ -19,7 +19,7 @@ function main(action, args1, args2, args3) {
   var name, rtn, props;
     
   // valid fields for this record   
-  props = ["id","title","completeFlag","assignedUser","dateCreated","dateUpdated"];
+  props = ["id","title","tags","completeFlag","assignedUser","dateCreated","dateUpdated"];
   elm = 'task';
 
   switch (action) {

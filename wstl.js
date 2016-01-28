@@ -176,6 +176,18 @@ function loadTrans() {
       {name : "assignedUser", prompt : "User", value : ""}
     ]
   });
+
+  trans.push({
+    name : "taskFormListByTag",
+    type : "safe",
+    action : "read",
+    kind : "task",
+    target : "list query",
+    prompt : "Search By Tag",
+    inputs : [
+      {name : "tag", prompt : "Tag", value : ""}
+    ]
+  });
   
   trans.push({
     name : "taskLinkItem",
