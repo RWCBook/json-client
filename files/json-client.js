@@ -236,7 +236,7 @@ function json() {
     elm = d.find("toplinks");
     d.clear(elm);
     menu = d.node("div");
-    menu.className = "ui horizontal menu";
+    menu.className = "ui blue fixed top menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
@@ -278,34 +278,34 @@ function json() {
     // handle returned objects
     if(msg) {
       coll = msg;
-      ul = d.node("ul");
+      segments = d.node("div");
+      segments.className = "ui segments";
 
       for(var item of coll) {
-        li = d.node("li");
-        dl = d.node("dl");
-        dt = d.node("dt");
-        
+        segment = d.node("div");
+        segment.className = "ui segment";
+        menu = d.node("div");
+        menu.className = "ui mini buttons";
         // emit item-level actions
-        dt = itemActions(dt, item, (coll.length===1));
+        menu = itemActions(menu, item, (coll.length===1));
+        d.push(menu, segment);
 
+        table = d.node("table");
+        table.className = "ui very basic collapsing celled table";
         // emit the data elements
-        dd = d.node("dd");
         for(var f of flds) {
-          p = d.data({className:"item "+f, text:f, value:item[f]+"&nbsp;"});
-          d.push(p,dd);
+          tr_data = d.data_row({className:"item "+f, text:f, value:item[f]+"&nbsp;"});
+          d.push(tr_data,table);
         }
-        
-        d.push(dt,dl);        
-        d.push(dd,dl);
-        d.push(dl,li);
-        d.push(li,ul);
+        d.push(table,segment);
+        d.push(segment,segments);
       }
-      d.push(ul,elm);
+      d.push(segments, elm);
     }
   }
   
   // handle item-level actions
-  function itemActions(dt, item, single) {
+  function itemActions(el, item, single) {
     var act, actions, link, a;
     
     actions = g.actions[g.object];
@@ -315,13 +315,13 @@ function json() {
         a = d.anchor({
           href:link.href.replace(/{id}/g,item.id),
           rel:(link.rel||"item"),
-          className:"item action",
+          className:"ui basic blue link item action button",
           text:link.prompt
         });
         a.onclick = link.func
         a.setAttribute("method",(link.method||"GET"));
         a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
-        d.push(a,dt);
+        d.push(a,el);
       }
     }
     
@@ -333,17 +333,17 @@ function json() {
           a = d.anchor({
             href:link.href.replace(/{id}/g,item.id),
             rel:(link.rel||"item"),
-            className:"item action",
+            className:"ui basic blue link item action button",
             text:link.prompt
           });
           a.onclick = link.func
           a.setAttribute("method",(link.method||""));
           a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
-          d.push(a,dt);
+          d.push(a,el);
         }
       }
     }
-    return dt;  
+    return el;
   }
   
   // handle list-level actions
@@ -355,7 +355,7 @@ function json() {
     elm = d.find("actions");
     d.clear(elm);
     menu = d.node("div");
-    menu.className = "ui horizontal menu";
+    menu.className = "ui compact menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
