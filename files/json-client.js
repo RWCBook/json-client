@@ -396,12 +396,14 @@ function json() {
     msg = g.msg[g.object];
     
     elm = d.find("form");
+    elm.style.display = "block";
     d.clear(elm);
     link = e.target;
     
     form = d.node("form");
     form.action = link.href;
     form.className = link.rel;
+    form.className += " ui form";
     switch(link.getAttribute("method")) {
       case "POST":
         form.onsubmit = httpPost;
@@ -413,10 +415,12 @@ function json() {
       default:
         form.onsubmit = httpQuery;
         break;
-    }    
-    fs = d.node("fieldset");
-    lg = d.node("legend");
+    }
+    fs = d.node("div");
+    fs.className = "ui form";
+    lg = d.node("div");
     lg.innerHTML = link.title||"Form";
+    lg.className = "ui dividing header";
     d.push(lg, fs);
 
     coll = JSON.parse(link.getAttribute("args"));
@@ -438,10 +442,12 @@ function json() {
     
     p = d.node("p");
     inp = d.node("input");
+    inp.className = "ui submit button";
     inp.type = "submit";
     d.push(inp,p);
 
     inp = d.node("input");
+    inp.className = "ui cancel button";
     inp.type = "button";
     inp.value = "Cancel";
     inp.onclick = function(){elm = d.find("form");d.clear(elm);}
