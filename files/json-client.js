@@ -236,7 +236,7 @@ function json() {
     elm = d.find("toplinks");
     d.clear(elm);
     menu = d.node("div");
-    menu.className = "ui horizontal menu";
+    menu.className = "ui blue fixed top menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
@@ -278,34 +278,36 @@ function json() {
     // handle returned objects
     if(msg) {
       coll = msg;
-      ul = d.node("ul");
+      segments = d.node("div");
+      segments.className = "ui segments";
 
       for(var item of coll) {
-        li = d.node("li");
-        dl = d.node("dl");
-        dt = d.node("dt");
-        
+        segment = d.node("div");
+        segment.className = "ui segment";
+        menu = d.node("div");
+        menu.className = "ui mini buttons";
         // emit item-level actions
-        dt = itemActions(dt, item, (coll.length===1));
+        menu = itemActions(menu, item, (coll.length===1));
+        d.push(menu, segment);
 
+        table = d.node("table");
+        table.className = "ui very basic padded collapsing celled table";
         // emit the data elements
-        dd = d.node("dd");
         for(var f of flds) {
-          p = d.data({className:"item "+f, text:f, value:item[f]+"&nbsp;"});
-          d.push(p,dd);
+          tr_data = d.data_row({className:"item "+f, text:f, value:item[f]+"&nbsp;"});
+          d.push(tr_data,table);
         }
-        
-        d.push(dt,dl);        
-        d.push(dd,dl);
-        d.push(dl,li);
-        d.push(li,ul);
+        d.push(table,segment);
+        d.push(segment,segments);
       }
-      d.push(ul,elm);
+      if (segments.childElementCount > 0) {
+        d.push(segments, elm);
+      }
     }
   }
   
   // handle item-level actions
-  function itemActions(dt, item, single) {
+  function itemActions(el, item, single) {
     var act, actions, link, a;
     
     actions = g.actions[g.object];
@@ -315,13 +317,13 @@ function json() {
         a = d.anchor({
           href:link.href.replace(/{id}/g,item.id),
           rel:(link.rel||"item"),
-          className:"item action",
+          className:"ui basic blue link item action button",
           text:link.prompt
         });
         a.onclick = link.func
         a.setAttribute("method",(link.method||"GET"));
         a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
-        d.push(a,dt);
+        d.push(a,el);
       }
     }
     
@@ -333,17 +335,17 @@ function json() {
           a = d.anchor({
             href:link.href.replace(/{id}/g,item.id),
             rel:(link.rel||"item"),
-            className:"item action",
+            className:"ui basic blue link item action button",
             text:link.prompt
           });
           a.onclick = link.func
           a.setAttribute("method",(link.method||""));
           a.setAttribute("args",(link.args?JSON.stringify(link.args):"{}"));
-          d.push(a,dt);
+          d.push(a,el);
         }
       }
     }
-    return dt;  
+    return el;
   }
   
   // handle list-level actions
@@ -355,7 +357,7 @@ function json() {
     elm = d.find("actions");
     d.clear(elm);
     menu = d.node("div");
-    menu.className = "ui horizontal menu";
+    menu.className = "ui compact menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
@@ -373,7 +375,9 @@ function json() {
         d.push(a,menu);
       }
     }
-    d.push(menu, elm);
+    if (menu.childElementCount > 0) {
+      d.push(menu, elm);
+    }
   }
   
   /********************************
@@ -385,6 +389,7 @@ function json() {
     
     elm = d.find("form");
     d.clear(elm);
+    elm.style.display = "none";
   }
   
   // generate a form for user input
@@ -396,12 +401,14 @@ function json() {
     msg = g.msg[g.object];
     
     elm = d.find("form");
+    elm.style.display = "block";
     d.clear(elm);
     link = e.target;
     
     form = d.node("form");
     form.action = link.href;
     form.className = link.rel;
+    form.className += " ui form";
     switch(link.getAttribute("method")) {
       case "POST":
         form.onsubmit = httpPost;
@@ -413,10 +420,12 @@ function json() {
       default:
         form.onsubmit = httpQuery;
         break;
-    }    
-    fs = d.node("fieldset");
-    lg = d.node("legend");
+    }
+    fs = d.node("div");
+    fs.className = "ui form";
+    lg = d.node("div");
     lg.innerHTML = link.title||"Form";
+    lg.className = "ui dividing header";
     d.push(lg, fs);
 
     coll = JSON.parse(link.getAttribute("args"));
@@ -438,13 +447,15 @@ function json() {
     
     p = d.node("p");
     inp = d.node("input");
+    inp.className = "ui submit button";
     inp.type = "submit";
     d.push(inp,p);
 
     inp = d.node("input");
+    inp.className = "ui cancel button";
     inp.type = "button";
     inp.value = "Cancel";
-    inp.onclick = function(){elm = d.find("form");d.clear(elm);}
+    inp.onclick = clearForm;
     d.push(inp,p);
 
     d.push(p,fs);            

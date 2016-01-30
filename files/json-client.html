@@ -11,24 +11,37 @@
   <head>
     <title>JSON</title>
     <link href="semantic.min.css" rel="stylesheet" />
+    <style>
+    /** hidden by default **/
+    #form, #dump { display: none };
+    </style>
   </head>
   <body>
-    <h1 id="title" class="ui page header"></h1>
     <div id="toplinks"></div>
-    <div id="content"></div>
-    <div id="actions"></div>
-    <div id="form"></div>
-    <div id="items"></div>
-    <div>
-      <pre id="dump" style="display: none"></pre>
+    <div style="margin: 5em 1em">
+      <h1 id="title" class="ui page header"></h1>
+      <div id="content"></div>
+      <div class="ui two column grid" style="margin-top: 1em">
+        <div class="column">
+          <div id="items"></div>
+        </div>
+        <div class="column">
+          <div id="actions"></div>
+          <div id="form" class="ui green segment"></div>
+        </div>
+      </div>
+      <div>
+        <pre id="dump"></pre>
+      </div>
     </div>
+
+    <script src="dom-help.js">//na </script>
+    <script src="json-client.js">//na </script>
+    <script>
+      window.onload = function() {
+        var pg = json();
+        pg.init("/home/", "TPS - Task Processing System");
+      }
+    </script>
   </body>
-  <script src="dom-help.js">//na </script>
-  <script src="json-client.js">//na </script>
-  <script>
-    window.onload = function() {
-      var pg = json();
-      pg.init("/home/", "TPS - Task Processing System");
-    }
-  </script>
 </html>
