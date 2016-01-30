@@ -291,7 +291,7 @@ function json() {
         d.push(menu, segment);
 
         table = d.node("table");
-        table.className = "ui very basic collapsing celled table";
+        table.className = "ui very basic padded collapsing celled table";
         // emit the data elements
         for(var f of flds) {
           tr_data = d.data_row({className:"item "+f, text:f, value:item[f]+"&nbsp;"});
@@ -455,7 +455,7 @@ function json() {
     inp.className = "ui cancel button";
     inp.type = "button";
     inp.value = "Cancel";
-    inp.onclick = function(){elm = d.find("form");d.clear(elm);}
+    inp.onclick = clearForm;
     d.push(inp,p);
 
     d.push(p,fs);            
