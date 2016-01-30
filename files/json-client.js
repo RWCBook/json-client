@@ -300,7 +300,9 @@ function json() {
         d.push(table,segment);
         d.push(segment,segments);
       }
-      d.push(segments, elm);
+      if (segments.childElementCount > 0) {
+        d.push(segments, elm);
+      }
     }
   }
   
@@ -373,7 +375,9 @@ function json() {
         d.push(a,menu);
       }
     }
-    d.push(menu, elm);
+    if (menu.childElementCount > 0) {
+      d.push(menu, elm);
+    }
   }
   
   /********************************
@@ -385,6 +389,7 @@ function json() {
     
     elm = d.find("form");
     d.clear(elm);
+    elm.style.display = "none";
   }
   
   // generate a form for user input
