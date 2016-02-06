@@ -291,7 +291,7 @@ function json() {
         d.push(menu, segment);
 
         table = d.node("table");
-        table.className = "ui very basic padded collapsing celled table";
+        table.className = "ui table";
         // emit the data elements
         for(var f of flds) {
           tr_data = d.data_row({className:"item "+f, text:f, value:item[f]+"&nbsp;"});
@@ -357,7 +357,7 @@ function json() {
     elm = d.find("actions");
     d.clear(elm);
     menu = d.node("div");
-    menu.className = "ui compact menu";
+    menu.className = "ui blue stackable menu";
     
     actions = g.actions[g.object];
     for(var act in actions) {
@@ -447,12 +447,12 @@ function json() {
     
     p = d.node("p");
     inp = d.node("input");
-    inp.className = "ui submit button";
+    inp.className = "ui mini positive submit button";
     inp.type = "submit";
     d.push(inp,p);
 
     inp = d.node("input");
-    inp.className = "ui cancel button";
+    inp.className = "ui mini cancel button";
     inp.type = "button";
     inp.value = "Cancel";
     inp.onclick = clearForm;
