@@ -72,9 +72,8 @@ function domHelp() {
 
     tr = node("tr");
     tr.className = args.className||"";
-    th = node('th');
-    th.className = "right aligned";
-    th.innerHTML = args.text||"";;
+    th = node("td");
+    th.innerHTML = "<strong>" + args.text + "</strong>"||"";;
     td = node("td");
     td.className = "value";
     td.innerHTML = args.value||"";

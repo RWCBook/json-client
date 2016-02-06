@@ -13,16 +13,22 @@
     <link href="semantic.min.css" rel="stylesheet" />
     <style>
     /** hidden by default **/
-    #form, #dump { display: none };
+    #form, #dump { display: none; }
+    @media only screen and (max-width:767px) {
+      .ui.stackable.grid > .column:not(.row) {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+      }
+    }
     </style>
   </head>
   <body>
     <div id="toplinks"></div>
     <div style="margin: 5em 1em">
       <h1 id="title" class="ui page header"></h1>
-      <div id="content"></div>
-      <div id="actions" style="margin-top:1em;text-align:center"></div>
-      <div class="ui two column grid" style="margin-top: 1em">
+      <div id="content" style="margin-bottom: 1em"></div>
+      <div id="actions" style="margin-bottom:1em;"></div>
+      <div class="ui mobile reversed two column stackable grid">
         <div class="column">
           <div id="items"></div>
         </div>
