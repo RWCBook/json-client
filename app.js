@@ -135,7 +135,7 @@ function handler(req, res) {
 
   // final error
   if(flg===false) {
-    handleResponse(req, res, utils.errorResponse(req, res, 'Not Found', 404));
+  //  handleResponse(req, res, utils.errorResponse(req, res, 'Not Found', 404));
   }
 }
 
